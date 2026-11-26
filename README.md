@@ -1,5 +1,7 @@
 # Sofa Chat
 
+![Sofa Chat: talk to an AI assistant from your couch](docs/banner.png)
+
 Ask an AI assistant questions from your couch: a free Apple TV app with big, readable answers and Siri Remote dictation.
 
 Hold the mic button on the remote, ask a question, and the answer appears in large type on the TV and is read aloud. When numbers help, you also get a simple bar chart. Sofa Chat works with Anthropic's Claude API using your own API key; there is no account to create and no server in between.
@@ -47,6 +49,8 @@ Code layout:
 | --- | --- |
 | `SofaChatCore/` | A Swift package with no dependencies: request building, response parsing, the conversation, key storage, demo answers and the Pro stubs. Builds on Linux too, so the tests run anywhere. |
 | `App/` | The SwiftUI screens, the speech voice and the Keychain wiring. |
+| `App/Assets.xcassets/` | The app icon, in three layers for the Apple TV's tilt effect, and the Top Shelf images. |
+| `Design/make_artwork.py` | Draws all of that artwork in code. Change a color and run it again (needs Pillow). |
 | `project.yml` | The XcodeGen spec that creates the Xcode project. |
 
 ## Free vs Pro
@@ -60,7 +64,7 @@ Code layout:
 | Demo mode with no key | Yes | Yes |
 | Wake word and hands-free mode | | Yes |
 | Family profiles | | Yes |
-| Ask about what's playing | | Yes |
+| Ask about what you're watching | | Yes |
 | Photo and screen sharing from your phone | | Yes |
 | Long-term memory | | Yes |
 | Voice choices | | Yes |

@@ -25,7 +25,7 @@ public enum ProFeature: String, CaseIterable, Identifiable, Sendable {
         switch self {
         case .handsFree: return "Wake word and hands-free mode"
         case .familyProfiles: return "Family profiles"
-        case .whatsPlaying: return "Ask about what's playing"
+        case .whatsPlaying: return "Ask about what you're watching"
         case .phoneSharing: return "Photo and screen sharing from your phone"
         case .longTermMemory: return "Long-term memory"
         case .voiceChoices: return "Voice choices"
@@ -40,7 +40,7 @@ public enum ProFeature: String, CaseIterable, Identifiable, Sendable {
         case .familyProfiles:
             return "A profile for each person in the house, each with its own chat history and settings."
         case .whatsPlaying:
-            return "Ask about the show or game on your TV, like who that actor is or what you missed."
+            return "Name the show or game, or snap the TV with your phone, then ask who that actor is or what you missed."
         case .phoneSharing:
             return "Send a photo or your phone's screen to the TV and ask about it together."
         case .longTermMemory:
@@ -85,8 +85,9 @@ public enum Pro {
         throw ProFeatureLocked(.familyProfiles)
     }
 
-    /// Ask about what's playing: answers a question about the show or game
-    /// currently on the TV.
+    /// Ask about what you're watching: answers a question about a show or game
+    /// the viewer names, or one in a photo of the TV sent from their phone.
+    /// (tvOS doesn't let one app see another app's screen.)
     public static func askAboutWhatsPlaying(_ question: String) throws -> Answer {
         throw ProFeatureLocked(.whatsPlaying)
     }

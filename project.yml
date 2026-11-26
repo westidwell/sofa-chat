@@ -34,8 +34,9 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.sofachat
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Sofa Chat
-        # No icons are bundled yet; add an asset catalog before shipping.
-        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        # App icon and Top Shelf images live in App/Assets.xcassets.
+        # Redraw them with: python3 Design/make_artwork.py
+        ASSETCATALOG_COMPILER_APPICON_NAME: "App Icon & Top Shelf Image"
         ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME: ""
         CODE_SIGN_STYLE: Automatic
         # Set your team in Xcode (Signing & Capabilities) to run on a real Apple TV.
