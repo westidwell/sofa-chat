@@ -7,6 +7,11 @@ name: screenshots
 
 on:
   workflow_dispatch:
+    inputs:
+      runner:
+        description: 'Mac runner to use (try macos-15-intel when the Apple-chip Macs are busy)'
+        required: false
+        default: 'macos-latest'
   push:
     branches: [launch-kit]
     paths:
@@ -21,7 +26,7 @@ permissions:
 jobs:
   screenshots:
     name: Apple TV screenshots
-    runs-on: macos-latest
+    runs-on: ${{ inputs.runner || 'macos-latest' }}
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
