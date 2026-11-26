@@ -41,12 +41,25 @@ struct ProOverviewView: View {
                 Text("Pro is \(PRO_PRICE) (launch price). It isn't open yet: star or watch the repo to hear when it opens.")
                     .font(.title3)
                     .foregroundStyle(.secondary)
-                ForEach(ProFeature.allCases) { feature in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Label(feature.name, systemImage: "lock.fill")
-                            .font(.headline)
-                        Text(feature.summary)
-                            .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                // Two columns, so every summary has room for its whole sentence.
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible(), spacing: 48, alignment: .topLeading),
+                        GridItem(.flexible(), spacing: 48, alignment: .topLeading),
+                    ],
+                    alignment: .leading,
+                    spacing: 32
+                ) {
+                    ForEach(ProFeature.allCases) { feature in
+                        VStack(alignment: .leading, spacing: 6) {
+                            Label(feature.name, systemImage: "lock.fill")
+                                .font(.headline)
+                            Text(feature.summary)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(3)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                     }
                 }
                 Button("Close") { dismiss() }
