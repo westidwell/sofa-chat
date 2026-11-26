@@ -114,7 +114,12 @@ jobs:
           git add -f shots/*.png
           if [ -s shots/demo.mp4 ]; then git add -f shots/demo.mp4; fi
           git commit -q -m "Screenshots from run $GITHUB_RUN_ID"
-          git push -fq origin screenshots-output
+          # GitHub sometimes times out on a push; try up to 4 times.
+          for wait in 0 5 15 30; do
+            sleep "$wait"
+            git push -fq origin screenshots-output && exit 0
+          done
+          exit 1
 
       - uses: actions/upload-artifact@v4
         if: always()
