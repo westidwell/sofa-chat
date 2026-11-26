@@ -8,6 +8,17 @@ Hold the mic button on the remote, ask a question, and the answer appears in lar
 
 > Sofa Chat is an independent open-source project. It is not made by, affiliated with or endorsed by Anthropic.
 
+## See it
+
+| | |
+|---|---|
+| ![A bar chart answer on the TV](docs/screenshots/chart.jpg) | ![An answer in large type on the TV](docs/screenshots/answer.jpg) |
+| When numbers help, you get a simple bar chart. | Answers in large type, read aloud. |
+| ![The first screen: try the demo or add your own key](docs/screenshots/setup.jpg) | ![The list of Pro features in the app](docs/screenshots/pro.jpg) |
+| Try the demo with no key, or add your own. | Pro features are on the way. Everything else is free. |
+
+Screenshots are from the Apple TV simulator in demo mode, with made-up answers.
+
 ## Try it (about 5 minutes)
 
 You need a Mac with Xcode 16 or later and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
