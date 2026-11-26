@@ -1,0 +1,84 @@
+name: screenshots
+
+# Takes real screenshots of the app in an Apple TV simulator, using the
+# demo mode (canned answers, no key, no network). Run it from the Actions tab,
+# or push to the launch-kit branch. The pictures are saved as a run artifact.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [launch-kit]
+    paths:
+      - 'App/**'
+      - 'SofaChatCore/Sources/**'
+      - 'project.yml'
+      - '.github/workflows/screenshots.yml'
+
+jobs:
+  screenshots:
+    name: Apple TV screenshots
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen 2.42.0
+        run: |
+          curl -sSL -o xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/2.42.0/xcodegen.zip
+          unzip -q xcodegen.zip
+
+      - name: Generate the Xcode project
+        run: ./xcodegen/bin/xcodegen generate
+
+      - name: Make sure the tvOS platform is installed
+        run: xcodebuild -showsdks | grep -q appletvsimulator || xcodebuild -downloadPlatform tvOS
+
+      - name: Create an Apple TV 4K simulator
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes tvOS -j | python3 -c "import json,sys; r=[x for x in json.load(sys.stdin)['runtimes'] if x.get('isAvailable')]; print(r[-1]['identifier'])")
+          DEVICE=$(xcrun simctl list devicetypes -j | python3 -c "import json,sys; t=[x['identifier'] for x in json.load(sys.stdin)['devicetypes'] if 'Apple-TV-4K' in x['identifier']]; print(t[-1])")
+          echo "Runtime $RUNTIME, device $DEVICE"
+          UDID=$(xcrun simctl create "Sofa Chat shots" "$DEVICE" "$RUNTIME")
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+
+      - name: Build for that simulator
+        run: |
+          xcodebuild build \
+            -project SofaChat.xcodeproj \
+            -scheme SofaChat \
+            -configuration Debug \
+            -destination "id=$UDID" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO
+          APP=$(find build/Build/Products -name 'SofaChat.app' -maxdepth 2 | head -1)
+          codesign --force --sign - "$APP"
+          echo "APP=$APP" >> "$GITHUB_ENV"
+
+      - name: Boot and install
+        run: |
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl install "$UDID" "$APP"
+
+      - name: Take the screenshots
+        run: |
+          mkdir -p shots
+          BUNDLE=com.example.sofachat
+          shoot () {
+            name="$1"; shift
+            xcrun simctl terminate "$UDID" "$BUNDLE" 2>/dev/null || true
+            xcrun simctl launch "$UDID" "$BUNDLE" "$@"
+            sleep 12
+            xcrun simctl io "$UDID" screenshot "shots/$name.png"
+          }
+          shoot 1-setup
+          shoot 2-chart -SofaChatDemoQuestion "Make a chart of our movie night snack votes"
+          shoot 3-hello -SofaChatDemoQuestion "Hello from the couch"
+          shoot 4-pro -SofaChatDemoQuestion "hi" -SofaChatShowPro YES
+          ls -la shots
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sofa-chat-screenshots
+          path: shots/*.png
+          retention-days: 30
