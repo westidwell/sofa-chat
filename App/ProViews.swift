@@ -64,7 +64,9 @@ struct ProOverviewView: View {
                 }
                 Button("Close") { dismiss() }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             ProLinkCode()
+                .frame(width: 320)
         }
         .padding(80)
     }
@@ -85,6 +87,8 @@ struct ProLinkCode: View {
             Text(PRO_URL)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }
