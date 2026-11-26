@@ -36,7 +36,7 @@ In Xcode, pick an Apple TV simulator and press Run. On the first screen:
 - **Try the demo (no key)** shows the whole app with canned, made-up answers. Ask it for a chart.
 - **Save key** uses the real assistant. Get an API key from the Claude Console at [platform.claude.com](https://platform.claude.com). On a real Apple TV you can paste it from your iPhone when the keyboard opens.
 
-To run on your own Apple TV, set your team under Signing & Capabilities and change the bundle id (`com.example.sofachat`) in `project.yml`.
+To run on your own Apple TV, set your team under Signing & Capabilities and change the bundle id (`com.westidwell.sofachat`) in `project.yml` to one of your own.
 
 Run the tests (offline, no Xcode project needed, macOS or Linux with Swift 5.9 or later):
 

@@ -72,7 +72,7 @@ jobs:
       - name: Take the screenshots
         run: |
           mkdir -p shots
-          BUNDLE=com.example.sofachat
+          BUNDLE=com.westidwell.sofachat
           shoot () {
             name="$1"; shift
             xcrun simctl terminate "$UDID" "$BUNDLE" 2>/dev/null || true
@@ -92,7 +92,7 @@ jobs:
         timeout-minutes: 4
         run: |
           set -m  # lets the background recorder receive Ctrl-C so it saves the file
-          BUNDLE=com.example.sofachat
+          BUNDLE=com.westidwell.sofachat
           xcrun simctl terminate "$UDID" "$BUNDLE" 2>/dev/null || true
           xcrun simctl io "$UDID" recordVideo --codec=h264 --force shots/demo.mp4 &
           REC=$!

@@ -3,8 +3,9 @@
 name: SofaChat
 
 options:
-  # Change this to your own reverse-domain prefix before running on a device.
-  bundleIdPrefix: com.example
+  # Building your own copy for a device? Change these two to your own
+  # reverse-domain prefix (and the bundle id below).
+  bundleIdPrefix: com.westidwell
   deploymentTarget:
     tvOS: "17.0"
   createIntermediateGroups: true
@@ -31,7 +32,7 @@ targets:
     settings:
       base:
         PRODUCT_NAME: SofaChat
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.sofachat
+        PRODUCT_BUNDLE_IDENTIFIER: com.westidwell.sofachat
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Sofa Chat
         # App icon and Top Shelf images live in App/Assets.xcassets.
