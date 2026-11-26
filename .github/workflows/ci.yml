@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: 'Mac runner to use (try macos-15-intel when the Apple-chip Macs are busy)'
+        required: false
+        default: 'macos-latest'
+
+jobs:
+  linux:
+    name: Engine tests on Linux
+    runs-on: ubuntu-latest
+    container: swift:6.0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Build
+        run: swift build
+      - name: Test
+        run: swift test
+
+  apple:
+    name: Tests and builds on Apple platforms
+    runs-on: ${{ inputs.runner || 'macos-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Test on macOS (engine and SwiftUI view)
+        run: swift test
+      - name: Make sure the tvOS platform is installed
+        run: xcodebuild -showsdks | grep -q appletvsimulator || xcodebuild -downloadPlatform tvOS
+      - name: Build for iOS
+        run: xcodebuild build -scheme SofaChatCore-Package -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO
+      - name: Build for tvOS
+        run: xcodebuild build -scheme SofaChatCore-Package -destination 'generic/platform=tvOS Simulator' CODE_SIGNING_ALLOWED=NO
