@@ -1,0 +1,37 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  core-tests:
+    name: Core tests (offline)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Run tests
+        run: swift test --package-path SofaChatCore
+
+  tvos-build:
+    name: Build the tvOS app
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen 2.42.0
+        run: |
+          curl -sSL -o xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/2.42.0/xcodegen.zip
+          unzip -q xcodegen.zip
+      - name: Generate the Xcode project
+        run: ./xcodegen/bin/xcodegen generate
+      - name: Make sure the tvOS platform is installed
+        run: xcodebuild -showsdks | grep -q appletvsimulator || xcodebuild -downloadPlatform tvOS
+      - name: Build for the tvOS Simulator
+        run: |
+          xcodebuild build \
+            -project SofaChat.xcodeproj \
+            -scheme SofaChat \
+            -destination 'generic/platform=tvOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
