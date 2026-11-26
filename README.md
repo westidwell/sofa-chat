@@ -71,9 +71,23 @@ Code layout:
 
 Pro is $1/month (launch price) and isn't open yet. See [PRO.md](PRO.md) for the list, and star or watch this repo to hear when it opens.
 
-## Contributing
+## Build on the engine
 
-Bug fixes and new free features are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Everything that isn't a screen lives in [`SofaChatCore`](SofaChatCore), a Swift package with no dependencies: it builds the request, asks for a small structured answer (what to say, a heading, chart bars), reads it back, keeps the conversation and stores the key. If you're making a big-screen or hands-free app for a TV, a kiosk, a car screen or a headset, it does the asking and answering for you.
+
+### Built with Sofa Chat
+
+Built something with Sofa Chat or its engine? Post it in [Show and tell](https://github.com/westidwell/sofa-chat/discussions/categories/show-and-tell) and it can be listed here.
+
+## Community
+
+- **Questions and ideas**: [Discussions](https://github.com/westidwell/sofa-chat/discussions)
+- **Bugs**: [open a bug report](https://github.com/westidwell/sofa-chat/issues/new/choose)
+- **Contributing**: bug fixes and new free features are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+- **Security**: report privately, see [SECURITY.md](SECURITY.md)
+- Everyone here follows the [code of conduct](CODE_OF_CONDUCT.md).
+
+If you'd like to see where Sofa Chat goes, star or watch this repo.
 
 ## License
 
