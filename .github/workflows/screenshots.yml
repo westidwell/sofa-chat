@@ -87,7 +87,11 @@ jobs:
           ls -la shots
 
       - name: Record a short demo video
+        # Optional: if the recorder misbehaves, the pictures still get pushed.
+        continue-on-error: true
+        timeout-minutes: 4
         run: |
+          set -m  # lets the background recorder receive Ctrl-C so it saves the file
           BUNDLE=com.example.sofachat
           xcrun simctl terminate "$UDID" "$BUNDLE" 2>/dev/null || true
           xcrun simctl io "$UDID" recordVideo --codec=h264 --force shots/demo.mp4 &
@@ -96,20 +100,24 @@ jobs:
           xcrun simctl launch "$UDID" "$BUNDLE" -SofaChatDemoQuestion "Make a chart of our movie night snack votes"
           sleep 14
           kill -INT "$REC"
-          wait "$REC" || true
+          for i in $(seq 1 20); do kill -0 "$REC" 2>/dev/null || break; sleep 1; done
+          kill -0 "$REC" 2>/dev/null && kill -9 "$REC" || true
           ls -la shots
 
       - name: Push the pictures to the screenshots-output branch
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -q --orphan screenshots-output
           git rm -rq --cached .
-          git add -f shots/*.png shots/*.mp4
+          git add -f shots/*.png
+          if [ -s shots/demo.mp4 ]; then git add -f shots/demo.mp4; fi
           git commit -q -m "Screenshots from run $GITHUB_RUN_ID"
           git push -fq origin screenshots-output
 
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: sofa-chat-screenshots
           path: |
