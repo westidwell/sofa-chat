@@ -2,7 +2,8 @@ name: screenshots
 
 # Takes real screenshots of the app in an Apple TV simulator, using the
 # demo mode (canned answers, no key, no network). Run it from the Actions tab,
-# or push to the launch-kit branch. The pictures are saved as a run artifact.
+# or push to the launch-kit branch. The pictures and a short silent demo video
+# are saved as a run artifact and pushed to the screenshots-output branch.
 
 on:
   workflow_dispatch:
@@ -13,6 +14,9 @@ on:
       - 'SofaChatCore/Sources/**'
       - 'project.yml'
       - '.github/workflows/screenshots.yml'
+
+permissions:
+  contents: write
 
 jobs:
   screenshots:
@@ -77,8 +81,33 @@ jobs:
           shoot 4-pro -SofaChatDemoQuestion "hi" -SofaChatShowPro YES
           ls -la shots
 
+      - name: Record a short demo video
+        run: |
+          BUNDLE=com.example.sofachat
+          xcrun simctl terminate "$UDID" "$BUNDLE" 2>/dev/null || true
+          xcrun simctl io "$UDID" recordVideo --codec=h264 --force shots/demo.mp4 &
+          REC=$!
+          sleep 3
+          xcrun simctl launch "$UDID" "$BUNDLE" -SofaChatDemoQuestion "Make a chart of our movie night snack votes"
+          sleep 14
+          kill -INT "$REC"
+          wait "$REC" || true
+          ls -la shots
+
+      - name: Push the pictures to the screenshots-output branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan screenshots-output
+          git rm -rq --cached .
+          git add -f shots/*.png shots/*.mp4
+          git commit -q -m "Screenshots from run $GITHUB_RUN_ID"
+          git push -fq origin screenshots-output
+
       - uses: actions/upload-artifact@v4
         with:
           name: sofa-chat-screenshots
-          path: shots/*.png
+          path: |
+            shots/*.png
+            shots/*.mp4
           retention-days: 30
