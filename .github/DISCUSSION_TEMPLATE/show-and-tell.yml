@@ -1,0 +1,25 @@
+title: "[Built with Sofa Chat] "
+body:
+  - type: markdown
+    attributes:
+      value: Built something with Sofa Chat or its engine, SofaChatCore? Show us. A photo of the TV or a short video is perfect.
+  - type: textarea
+    id: what
+    attributes:
+      label: What did you build?
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link to the code or a video (optional)
+  - type: dropdown
+    id: screen
+    attributes:
+      label: What screen does it run on?
+      options:
+        - Apple TV
+        - iPhone or iPad
+        - Mac
+        - Vision Pro
+        - Something else

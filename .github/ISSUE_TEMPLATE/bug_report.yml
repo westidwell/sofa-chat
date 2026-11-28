@@ -1,0 +1,56 @@
+name: Bug report
+description: Something in Sofa Chat doesn't work the way it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. Never paste your API key here, not even part of it.
+        Setup questions are quicker in [Discussions](https://github.com/westidwell/sofa-chat/discussions/categories/q-a).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you asked, what you expected, and what the screen showed.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to see it again
+      placeholder: |
+        1. Open Sofa Chat
+        2. Ask "..."
+        3. See ...
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where are you running it?
+      options:
+        - Apple TV (real device)
+        - Apple TV simulator in Xcode
+        - Core tests only (swift test)
+    validations:
+      required: true
+  - type: input
+    id: tvos
+    attributes:
+      label: tvOS version
+      placeholder: "26.1"
+  - type: input
+    id: model
+    attributes:
+      label: Model id from Settings
+      placeholder: claude-sonnet-5-5
+  - type: dropdown
+    id: demo
+    attributes:
+      label: Demo mode or your own key?
+      options:
+        - Demo mode (no key)
+        - My own key
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Screenshots help a lot. Photos of the TV are fine.

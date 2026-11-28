@@ -49,6 +49,14 @@ struct ChatView: View {
         .sheet(isPresented: $showPro) {
             ProOverviewView()
         }
+        #if DEBUG
+        .task {
+            if ScreenshotScene.showPro {
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                showPro = true
+            }
+        }
+        #endif
     }
 
     private var header: some View {

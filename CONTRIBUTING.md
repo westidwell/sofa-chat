@@ -14,4 +14,10 @@ Features listed in PRO.md are reserved for the Pro edition, so pull requests tha
 
 ## Reporting a bug
 
-Open an issue with your tvOS version, the model id from Settings, what you asked, and what the screen showed. Don't paste your API key.
+[Open a bug report](https://github.com/westidwell/sofa-chat/issues/new/choose). The form asks for your tvOS version, the model id from Settings, what you asked, and what the screen showed. Don't paste your API key.
+
+## Questions and ideas
+
+Use [Discussions](https://github.com/westidwell/sofa-chat/discussions). If you built something with Sofa Chat or its engine, post it in Show and tell.
+
+Everyone here follows the [code of conduct](CODE_OF_CONDUCT.md).

@@ -1,0 +1,131 @@
+name: screenshots
+
+# Takes real screenshots of the app in an Apple TV simulator, using the
+# demo mode (canned answers, no key, no network). Run it from the Actions tab,
+# or push to the launch-kit branch. The pictures and a short silent demo video
+# are saved as a run artifact and pushed to the screenshots-output branch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: 'Mac runner to use (try macos-15-intel when the Apple-chip Macs are busy)'
+        required: false
+        default: 'macos-latest'
+  push:
+    branches: [launch-kit]
+    paths:
+      - 'App/**'
+      - 'SofaChatCore/Sources/**'
+      - 'project.yml'
+      - '.github/workflows/screenshots.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  screenshots:
+    name: Apple TV screenshots
+    runs-on: ${{ inputs.runner || 'macos-latest' }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen 2.42.0
+        run: |
+          curl -sSL -o xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/2.42.0/xcodegen.zip
+          unzip -q xcodegen.zip
+
+      - name: Generate the Xcode project
+        run: ./xcodegen/bin/xcodegen generate
+
+      - name: Make sure the tvOS platform is installed
+        run: xcodebuild -showsdks | grep -q appletvsimulator || xcodebuild -downloadPlatform tvOS
+
+      - name: Create an Apple TV 4K simulator
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes tvOS -j | python3 -c "import json,sys; r=[x for x in json.load(sys.stdin)['runtimes'] if x.get('isAvailable')]; print(r[-1]['identifier'])")
+          DEVICE=$(xcrun simctl list devicetypes -j | python3 -c "import json,sys; t=[x['identifier'] for x in json.load(sys.stdin)['devicetypes'] if 'Apple-TV-4K' in x['identifier']]; print(t[-1])")
+          echo "Runtime $RUNTIME, device $DEVICE"
+          UDID=$(xcrun simctl create "Sofa Chat shots" "$DEVICE" "$RUNTIME")
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+
+      - name: Build for that simulator
+        run: |
+          xcodebuild build \
+            -project SofaChat.xcodeproj \
+            -scheme SofaChat \
+            -configuration Debug \
+            -destination "id=$UDID" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO
+          APP=$(find build/Build/Products -name 'SofaChat.app' -maxdepth 2 | head -1)
+          codesign --force --sign - "$APP"
+          echo "APP=$APP" >> "$GITHUB_ENV"
+
+      - name: Boot and install
+        run: |
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl install "$UDID" "$APP"
+
+      - name: Take the screenshots
+        run: |
+          mkdir -p shots
+          BUNDLE=com.westidwell.sofachat
+          shoot () {
+            name="$1"; shift
+            xcrun simctl terminate "$UDID" "$BUNDLE" 2>/dev/null || true
+            xcrun simctl launch "$UDID" "$BUNDLE" "$@"
+            sleep 12
+            xcrun simctl io "$UDID" screenshot "shots/$name.png"
+          }
+          shoot 1-setup
+          shoot 2-chart -SofaChatDemoQuestion "Make a chart of our movie night snack votes"
+          shoot 3-hello -SofaChatDemoQuestion "Hello from the couch"
+          shoot 4-pro -SofaChatDemoQuestion "hi" -SofaChatShowPro YES
+          ls -la shots
+
+      - name: Record a short demo video
+        # Optional: if the recorder misbehaves, the pictures still get pushed.
+        continue-on-error: true
+        timeout-minutes: 4
+        run: |
+          set -m  # lets the background recorder receive Ctrl-C so it saves the file
+          BUNDLE=com.westidwell.sofachat
+          xcrun simctl terminate "$UDID" "$BUNDLE" 2>/dev/null || true
+          xcrun simctl io "$UDID" recordVideo --codec=h264 --force shots/demo.mp4 &
+          REC=$!
+          sleep 3
+          xcrun simctl launch "$UDID" "$BUNDLE" -SofaChatDemoQuestion "Make a chart of our movie night snack votes"
+          sleep 14
+          kill -INT "$REC"
+          for i in $(seq 1 20); do kill -0 "$REC" 2>/dev/null || break; sleep 1; done
+          kill -0 "$REC" 2>/dev/null && kill -9 "$REC" || true
+          ls -la shots
+
+      - name: Push the pictures to the screenshots-output branch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan screenshots-output
+          git rm -rq --cached .
+          git add -f shots/*.png
+          if [ -s shots/demo.mp4 ]; then git add -f shots/demo.mp4; fi
+          git commit -q -m "Screenshots from run $GITHUB_RUN_ID"
+          # GitHub sometimes times out on a push; try up to 4 times.
+          for wait in 0 5 15 30; do
+            sleep "$wait"
+            git push -fq origin screenshots-output && exit 0
+          done
+          exit 1
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sofa-chat-screenshots
+          path: |
+            shots/*.png
+            shots/*.mp4
+          retention-days: 30

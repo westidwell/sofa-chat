@@ -8,6 +8,17 @@ Hold the mic button on the remote, ask a question, and the answer appears in lar
 
 > Sofa Chat is an independent open-source project. It is not made by, affiliated with or endorsed by Anthropic.
 
+## See it
+
+| | |
+|---|---|
+| ![A bar chart answer on the TV](docs/screenshots/chart.jpg) | ![An answer in large type on the TV](docs/screenshots/answer.jpg) |
+| When numbers help, you get a simple bar chart. | Answers in large type, read aloud. |
+| ![The first screen: try the demo or add your own key](docs/screenshots/setup.jpg) | ![The list of Pro features in the app](docs/screenshots/pro.jpg) |
+| Try the demo with no key, or add your own. | Pro features are on the way. Everything else is free. |
+
+Screenshots are from the Apple TV simulator in demo mode, with made-up answers.
+
 ## Try it (about 5 minutes)
 
 You need a Mac with Xcode 16 or later and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
@@ -25,7 +36,7 @@ In Xcode, pick an Apple TV simulator and press Run. On the first screen:
 - **Try the demo (no key)** shows the whole app with canned, made-up answers. Ask it for a chart.
 - **Save key** uses the real assistant. Get an API key from the Claude Console at [platform.claude.com](https://platform.claude.com). On a real Apple TV you can paste it from your iPhone when the keyboard opens.
 
-To run on your own Apple TV, set your team under Signing & Capabilities and change the bundle id (`com.example.sofachat`) in `project.yml`.
+To run on your own Apple TV, set your team under Signing & Capabilities and change the bundle id (`com.westidwell.sofachat`) in `project.yml` to one of your own.
 
 Run the tests (offline, no Xcode project needed, macOS or Linux with Swift 5.9 or later):
 
@@ -71,9 +82,23 @@ Code layout:
 
 Pro is $1/month (launch price) and isn't open yet. See [PRO.md](PRO.md) for the list, and star or watch this repo to hear when it opens.
 
-## Contributing
+## Build on the engine
 
-Bug fixes and new free features are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Everything that isn't a screen lives in [`SofaChatCore`](SofaChatCore), a Swift package with no dependencies: it builds the request, asks for a small structured answer (what to say, a heading, chart bars), reads it back, keeps the conversation and stores the key. If you're making a big-screen or hands-free app for a TV, a kiosk, a car screen or a headset, it does the asking and answering for you.
+
+### Built with Sofa Chat
+
+Built something with Sofa Chat or its engine? Post it in [Show and tell](https://github.com/westidwell/sofa-chat/discussions/categories/show-and-tell) and it can be listed here.
+
+## Community
+
+- **Questions and ideas**: [Discussions](https://github.com/westidwell/sofa-chat/discussions)
+- **Bugs**: [open a bug report](https://github.com/westidwell/sofa-chat/issues/new/choose)
+- **Contributing**: bug fixes and new free features are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+- **Security**: report privately, see [SECURITY.md](SECURITY.md)
+- Everyone here follows the [code of conduct](CODE_OF_CONDUCT.md).
+
+If you'd like to see where Sofa Chat goes, star or watch this repo.
 
 ## License
 

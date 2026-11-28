@@ -1,0 +1,26 @@
+name: Feature idea
+description: Suggest something new for the free app.
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Features listed in [PRO.md](https://github.com/westidwell/sofa-chat/blob/main/PRO.md) are already planned for Pro.
+        For a looser chat about an idea, use [Discussions](https://github.com/westidwell/sofa-chat/discussions/categories/ideas).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to do from the couch?
+      description: The situation, in a sentence or two. "When I'm watching X, I want to..."
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: How you picture it working
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Want to build it?
+      options:
+        - label: I'd like to send a pull request for this.
